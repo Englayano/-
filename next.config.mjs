@@ -1,15 +1,18 @@
 import withPWAInit from "next-pwa";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 const withPWA = withPWAInit({
   dest: "public",
+  sw: "sw.js",
   register: true,
   skipWaiting: true,
   clientsClaim: true,
   cacheStartUrl: true,
   dynamicStartUrl: false,
   reloadOnOnline: false,
-  disable: process.env.NODE_ENV === "development",
-  buildExcludes: [/middleware-manifest\.json$/],
+  disable: isDevelopment,
+  buildExcludes: [/middleware-manifest\.json$/, /app-build-manifest\.json$/],
   runtimeCaching: [
     {
       urlPattern: /^https?:\/\/[^/]+\/$/i,
@@ -64,6 +67,7 @@ const nextConfig = {
   output: "export",
   reactStrictMode: true,
   trailingSlash: true,
+  skipTrailingSlashRedirect: true,
   images: {
     unoptimized: true,
   },

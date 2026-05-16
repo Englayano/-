@@ -7,7 +7,7 @@
     "dev": "concurrently -k \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
     "next:dev": "next dev",
     "electron:dev": "wait-on http://localhost:3000 && electron .",
-    "build": "next build",
+    "build": "node scripts/clean-static-output.mjs && next build && node scripts/verify-static-export.mjs",
     "start": "next start",
     "lint": "next lint"
   },
