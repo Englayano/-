@@ -4,6 +4,10 @@ const withPWA = withPWAInit({
   dest: "public",
   register: true,
   skipWaiting: true,
+  clientsClaim: true,
+  cacheStartUrl: true,
+  dynamicStartUrl: false,
+  reloadOnOnline: false,
   disable: process.env.NODE_ENV === "development",
   buildExcludes: [/middleware-manifest\.json$/],
   runtimeCaching: [
@@ -57,8 +61,12 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  output: "export",
   reactStrictMode: true,
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default withPWA(nextConfig);

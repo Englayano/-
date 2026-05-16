@@ -1,0 +1,17 @@
+/sw.js
+  Cache-Control: no-cache
+
+/workbox-*.js
+  Cache-Control: no-cache
+
+/manifest.json
+  Cache-Control: public, max-age=3600
+
+/icon-192.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/icon-512.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
