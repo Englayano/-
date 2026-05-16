@@ -65,15 +65,20 @@ const currencyArabic: Record<Currency, string> = {
   TRY: "ليرة تركية",
 };
 
-const starterSubscriptions: Subscription[] = [];
+// ============ Helpers ============
 
-const blankDraft: Draft = {
-  name: "",
-  price: 9.99,
-  currency: "SAR",
-  renewal: "monthly",
-  renewalDate: new Date().toISOString().slice(0, 10),
-};
+function nextDate(offset: number) {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().slice(0, 10);
+}
+
+function createId() {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
 
 function isCurrency(value: unknown): value is Currency {
   return typeof value === "string" && currencies.includes(value as Currency);
@@ -88,7 +93,7 @@ function isValidDateInput(value: unknown): value is string {
 }
 
 function readStoredSubscriptions(value: string | null) {
-  if (!value) return [];
+  if (!value) return null;
 
   try {
     const parsed = JSON.parse(value);
@@ -101,30 +106,24 @@ function readStoredSubscriptions(value: string | null) {
 
         return {
           id: typeof record.id === "string" ? record.id : `stored-${index}`,
-          name: typeof record.name === "string" && record.name.trim() ? record.name : "اشتراك جديد",
-          price: Number.isFinite(Number(record.price)) ? Math.max(0, Number(record.price)) : 0,
+          name:
+            typeof record.name === "string" && record.name.trim()
+              ? record.name
+              : "اشتراك جديد",
+          price: Number.isFinite(Number(record.price))
+            ? Math.max(0, Number(record.price))
+            : 0,
           currency: isCurrency(record.currency) ? record.currency : "SAR",
           renewal: isRenewal(record.renewal) ? record.renewal : "monthly",
-          renewalDate: isValidDateInput(record.renewalDate) ? record.renewalDate : nextDate(14),
+          renewalDate: isValidDateInput(record.renewalDate)
+            ? record.renewalDate
+            : nextDate(14),
         };
       })
       .filter((item): item is Subscription => Boolean(item));
   } catch {
-    return []};
+    return null;
   }
-}
-
-function nextDate(offset: number) {
-  const date = new Date();
-  date.setHours(12, 0, 0, 0);
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().slice(0, 10);
-}
-
-function createId() {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function convert(amount: number, from: Currency, to: Currency) {
@@ -143,8 +142,11 @@ function getNextRenewalDate(value: string, renewal: Renewal) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  while (date < today) {
+  // حماية من حلقة لا نهائية لو التاريخ قديم جداً
+  let safety = 0;
+  while (date < today && safety < 1000) {
     date = addInterval(date, renewal);
+    safety++;
   }
 
   return date;
@@ -202,7 +204,10 @@ function cardTier(priceInMainCurrency: number) {
 
 function toneForSubscription(subscription: Subscription): Tone {
   const tones: Tone[] = ["violet", "mint", "rose", "gold", "sky", "peach", "aqua"];
-  const seed = [...subscription.name].reduce((sum, letter) => sum + letter.charCodeAt(0), 0);
+  const seed = [...subscription.name].reduce(
+    (sum, letter) => sum + letter.charCodeAt(0),
+    0,
+  );
   return tones[seed % tones.length];
 }
 
@@ -216,8 +221,23 @@ function logoForName(name: string) {
   if (lower.includes("notion")) return { mark: "N", className: "logo-notion" };
   if (lower.includes("canva")) return { mark: "C", className: "logo-canva" };
   if (name.includes("شاهد")) return { mark: "VIP", className: "logo-shahid" };
-  return { mark: name.trim().charAt(0).toUpperCase() || "+", className: "logo-generic" };
+  return {
+    mark: name.trim().charAt(0).toUpperCase() || "+",
+    className: "logo-generic",
+  };
 }
+
+// ============ Defaults ============
+
+const blankDraft: Draft = {
+  name: "",
+  price: 9.99,
+  currency: "SAR",
+  renewal: "monthly",
+  renewalDate: new Date().toISOString().slice(0, 10),
+};
+
+// ============ Component ============
 
 export default function HomePage() {
   const [preferredCurrency, setPreferredCurrency] = useState<Currency | null>(null);
@@ -228,33 +248,37 @@ export default function HomePage() {
   const [draft, setDraft] = useState<Draft>(blankDraft);
   const [ready, setReady] = useState(false);
 
+  // تحميل البيانات من localStorage
   useEffect(() => {
     const storedCurrency = localStorage.getItem("subflow.currency") as Currency | null;
     const storedSubscriptions = localStorage.getItem("subflow.subscriptions");
     const storedPrivacy = localStorage.getItem("subflow.hidePrices");
-    localStorage.removeItem("subflow.subscriptions");
 
     if (storedCurrency && currencies.includes(storedCurrency)) {
       setPreferredCurrency(storedCurrency);
     }
 
-    setSubscriptions([]);
+    const parsedSubscriptions = readStoredSubscriptions(storedSubscriptions);
+    // المستخدم الجديد يبدأ بقائمة فاضية
+    setSubscriptions(parsedSubscriptions ?? []);
+
     setHidePrices(storedPrivacy === "true");
     setReady(true);
-
-    // next-pwa registers the production service worker.
   }, []);
 
+  // حفظ الاشتراكات
   useEffect(() => {
     if (!ready) return;
     localStorage.setItem("subflow.subscriptions", JSON.stringify(subscriptions));
   }, [ready, subscriptions]);
 
+  // حفظ العملة
   useEffect(() => {
     if (!ready || !preferredCurrency) return;
     localStorage.setItem("subflow.currency", preferredCurrency);
   }, [ready, preferredCurrency]);
 
+  // حفظ تفضيل الإخفاء
   useEffect(() => {
     if (!ready) return;
     localStorage.setItem("subflow.hidePrices", String(hidePrices));
@@ -288,7 +312,7 @@ export default function HomePage() {
     setModalOpen(true);
   }
 
-  function saveSubscription(event: FormEvent<HTMLFormElement>) {
+  function saveSubscription(event: FormEvent) {
     event.preventDefault();
     const normalized: Draft = {
       ...draft,
@@ -310,20 +334,26 @@ export default function HomePage() {
   }
 
   return (
-    <main className="app-page">
-      <div className="app-shell">
-        <header className="hero-header">
-          <div className="header-action start">
+    <main className="app-shell" dir="rtl">
+      <div className="app-container">
+        <header className="app-header">
+          <div className="header-controls">
             <button
               className="round-control"
               onClick={() => setHidePrices((value) => !value)}
               title={hidePrices ? "إظهار الأسعار" : "إخفاء الأسعار"}
               type="button"
             >
-              {hidePrices ? <EyeOff size={22} /> : <Eye size={22} />}
+              {hidePrices ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
-            <button className="round-control mobile-hidden" title="العملة الرئيسية" type="button" onClick={() => setPreferredCurrency(null)}>
-              <Settings size={22} />
+
+            <button
+              className="round-control mobile-hidden"
+              title="العملة الرئيسية"
+              type="button"
+              onClick={() => setPreferredCurrency(null)}
+            >
+              <Settings size={18} />
             </button>
           </div>
 
@@ -344,11 +374,18 @@ export default function HomePage() {
           <motion.section className="subscription-grid" layout>
             <AnimatePresence initial={false}>
               {subscriptions.map((subscription) => {
-                const convertedPrice = convert(subscription.price, subscription.currency, mainCurrency);
+                const convertedPrice = convert(
+                  subscription.price,
+                  subscription.currency,
+                  mainCurrency,
+                );
                 const tier = cardTier(convertedPrice);
                 const remaining = daysUntil(subscription.renewalDate, subscription.renewal);
                 const close = remaining <= 5;
-                const nextRenewal = getNextRenewalDate(subscription.renewalDate, subscription.renewal);
+                const nextRenewal = getNextRenewalDate(
+                  subscription.renewalDate,
+                  subscription.renewal,
+                );
                 const logo = logoForName(subscription.name);
                 const tone = toneForSubscription(subscription);
 
@@ -371,7 +408,9 @@ export default function HomePage() {
                     <div className="card-body">
                       <h2>{subscription.name}</h2>
                       <div className="price-line">
-                        <strong>{formatMoney(subscription.price, subscription.currency, hidePrices)}</strong>
+                        <strong>
+                          {formatMoney(subscription.price, subscription.currency, hidePrices)}
+                        </strong>
                         <span>{subscription.currency}</span>
                       </div>
                     </div>
@@ -388,10 +427,20 @@ export default function HomePage() {
                     </footer>
 
                     <div className="card-actions">
-                      <button className="mini-button" onClick={() => openEditModal(subscription)} title="تعديل" type="button">
+                      <button
+                        className="mini-button"
+                        onClick={() => openEditModal(subscription)}
+                        title="تعديل"
+                        type="button"
+                      >
                         <Pencil size={15} />
                       </button>
-                      <button className="mini-button" onClick={() => deleteSubscription(subscription.id)} title="حذف" type="button">
+                      <button
+                        className="mini-button"
+                        onClick={() => deleteSubscription(subscription.id)}
+                        title="حذف"
+                        type="button"
+                      >
                         <Trash2 size={15} />
                       </button>
                     </div>
@@ -418,7 +467,11 @@ export default function HomePage() {
             <strong>{formatMoney(monthlyTotal, mainCurrency, hidePrices)}</strong>
           </div>
           <div className="summary-divider" />
-          <button className="summary-currency" onClick={() => setPreferredCurrency(null)} type="button">
+          <button
+            className="summary-currency"
+            onClick={() => setPreferredCurrency(null)}
+            type="button"
+          >
             <span>{currencySymbols[mainCurrency]}</span>
             {mainCurrency}
             <ChevronDown size={18} />
@@ -437,7 +490,12 @@ export default function HomePage() {
 
       <AnimatePresence>
         {(!preferredCurrency || modalOpen) && (
-          <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div
+            className="modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             {!preferredCurrency ? (
               <motion.section
                 className="modal-panel max-w-sm"
@@ -447,10 +505,17 @@ export default function HomePage() {
               >
                 <p className="modal-kicker">أول تشغيل</p>
                 <h2>اختر العملة الرئيسية</h2>
-                <p className="modal-subtitle">سنستخدمها لحساب الإجمالي وتحويل كل الاشتراكات محلياً.</p>
+                <p className="modal-subtitle">
+                  سنستخدمها لحساب الإجمالي وتحويل كل الاشتراكات محلياً.
+                </p>
                 <div className="currency-grid">
                   {currencies.map((currency) => (
-                    <button className="currency-choice" key={currency} onClick={() => setPreferredCurrency(currency)} type="button">
+                    <button
+                      className="currency-choice"
+                      key={currency}
+                      onClick={() => setPreferredCurrency(currency)}
+                      type="button"
+                    >
                       <span>{currencySymbols[currency]}</span>
                       <b>{currency}</b>
                       <small>{currencyArabic[currency]}</small>
@@ -467,7 +532,11 @@ export default function HomePage() {
               >
                 <div className="modal-head">
                   <h2>{editingId ? "تعديل الاشتراك" : "إضافة اشتراك"}</h2>
-                  <button className="round-control small" onClick={() => setModalOpen(false)} type="button">
+                  <button
+                    className="round-control small"
+                    onClick={() => setModalOpen(false)}
+                    type="button"
+                  >
                     <X size={18} />
                   </button>
                 </div>
@@ -476,7 +545,9 @@ export default function HomePage() {
                     <span>اسم الاشتراك</span>
                     <input
                       autoFocus
-                      onChange={(event) => setDraft((value) => ({ ...value, name: event.target.value }))}
+                      onChange={(event) =>
+                        setDraft((value) => ({ ...value, name: event.target.value }))
+                      }
                       placeholder="Netflix"
                       required
                       value={draft.name}
@@ -487,7 +558,12 @@ export default function HomePage() {
                       <span>السعر</span>
                       <input
                         min="0"
-                        onChange={(event) => setDraft((value) => ({ ...value, price: Number(event.target.value) }))}
+                        onChange={(event) =>
+                          setDraft((value) => ({
+                            ...value,
+                            price: Number(event.target.value),
+                          }))
+                        }
                         step="0.01"
                         type="number"
                         value={draft.price}
@@ -496,7 +572,12 @@ export default function HomePage() {
                     <label className="field">
                       <span>العملة</span>
                       <select
-                        onChange={(event) => setDraft((value) => ({ ...value, currency: event.target.value as Currency }))}
+                        onChange={(event) =>
+                          setDraft((value) => ({
+                            ...value,
+                            currency: event.target.value as Currency,
+                          }))
+                        }
                         value={draft.currency}
                       >
                         {currencies.map((currency) => (
@@ -520,7 +601,9 @@ export default function HomePage() {
                   <label className="field">
                     <span>تاريخ التجديد</span>
                     <input
-                      onChange={(event) => setDraft((value) => ({ ...value, renewalDate: event.target.value }))}
+                      onChange={(event) =>
+                        setDraft((value) => ({ ...value, renewalDate: event.target.value }))
+                      }
                       required
                       type="date"
                       value={draft.renewalDate}
@@ -530,7 +613,11 @@ export default function HomePage() {
                     {editingId ? "حفظ التعديلات" : "إضافة الاشتراك"}
                   </button>
                   {editingId && (
-                    <button className="delete-button" onClick={() => deleteSubscription(editingId)} type="button">
+                    <button
+                      className="delete-button"
+                      onClick={() => deleteSubscription(editingId)}
+                      type="button"
+                    >
                       حذف الاشتراك
                     </button>
                   )}
