@@ -88,7 +88,7 @@ function isValidDateInput(value: unknown): value is string {
 }
 
 function readStoredSubscriptions(value: string | null) {
-  if (!value) return null;
+  if (!value) return [];
 
   try {
     const parsed = JSON.parse(value);
@@ -110,7 +110,7 @@ function readStoredSubscriptions(value: string | null) {
       })
       .filter((item): item is Subscription => Boolean(item));
   } catch {
-    return null;
+    return []};
   }
 }
 
