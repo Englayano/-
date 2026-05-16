@@ -65,16 +65,7 @@ const currencyArabic: Record<Currency, string> = {
   TRY: "ليرة تركية",
 };
 
-const starterSubscriptions: Subscription[] = [
-  { id: "sample-1", name: "YouTube Premium", price: 11.99, currency: "USD", renewal: "monthly", renewalDate: nextDate(37) },
-  { id: "sample-2", name: "Spotify Premium", price: 5.99, currency: "USD", renewal: "monthly", renewalDate: nextDate(25) },
-  { id: "sample-3", name: "Netflix", price: 15.99, currency: "USD", renewal: "monthly", renewalDate: nextDate(20) },
-  { id: "sample-4", name: "Adobe Creative Cloud", price: 59.99, currency: "USD", renewal: "yearly", renewalDate: nextDate(244) },
-  { id: "sample-5", name: "iCloud+ 200GB", price: 2.99, currency: "USD", renewal: "monthly", renewalDate: nextDate(18) },
-  { id: "sample-6", name: "شاهد VIP", price: 15, currency: "SAR", renewal: "monthly", renewalDate: nextDate(23) },
-  { id: "sample-7", name: "Canva Pro", price: 12.99, currency: "USD", renewal: "yearly", renewalDate: nextDate(218) },
-  { id: "sample-8", name: "Notion Plus", price: 4, currency: "USD", renewal: "monthly", renewalDate: nextDate(16) },
-];
+const starterSubscriptions: Subscription[] = [];
 
 const blankDraft: Draft = {
   name: "",
