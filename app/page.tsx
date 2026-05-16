@@ -233,13 +233,12 @@ export default function HomePage() {
     const storedSubscriptions = localStorage.getItem("subflow.subscriptions");
     const storedPrivacy = localStorage.getItem("subflow.hidePrices");
     localStorage.removeItem("subflow.subscriptions");
+
     if (storedCurrency && currencies.includes(storedCurrency)) {
       setPreferredCurrency(storedCurrency);
     }
 
-    const parsedSubscriptions = readStoredSubscriptions(storedSubscriptions);
-
-setSubscriptions(parsedSubscriptions ?? []);
+    setSubscriptions([]);
     setHidePrices(storedPrivacy === "true");
     setReady(true);
 
