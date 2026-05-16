@@ -73,15 +73,31 @@ button {
   width: min(100%, 1180px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 28px 24px 34px;
+  padding:
+    calc(28px + env(safe-area-inset-top, 0px))
+    calc(24px + env(safe-area-inset-right, 0px))
+    34px
+    calc(24px + env(safe-area-inset-left, 0px));
 }
 
-.hero-header {
+.app-container {
+  display: contents;
+}
+
+.hero-header,
+.app-header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  align-items: start;
+  align-items: center;
   gap: 20px;
   margin-bottom: 28px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: end;
 }
 
 .header-title {
@@ -188,7 +204,7 @@ button {
   grid-auto-rows: 92px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
-  padding-bottom: 180px;
+  padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px));
 }
 
 .subscription-card {
@@ -483,7 +499,7 @@ button {
   position: fixed;
   right: max(20px, calc((100vw - 1180px) / 2 + 24px));
   left: max(20px, calc((100vw - 1180px) / 2 + 24px));
-  bottom: 34px;
+  bottom: calc(34px + env(safe-area-inset-bottom, 0px));
   z-index: 30;
   display: grid;
   grid-template-columns: auto 1fr auto auto;
@@ -569,7 +585,7 @@ button {
   position: fixed;
   right: 20px;
   left: 20px;
-  bottom: 6px;
+  bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   z-index: 29;
   color: rgba(90, 96, 120, 0.72);
   font-size: 0.82rem;
@@ -815,14 +831,23 @@ button {
 
 @media (max-width: 759px) {
   .app-shell {
-    padding: 18px 14px 28px;
+    padding:
+      calc(28px + env(safe-area-inset-top, 0px))
+      calc(14px + env(safe-area-inset-right, 0px))
+      28px
+      calc(14px + env(safe-area-inset-left, 0px));
   }
 
-  .hero-header {
+  .hero-header,
+  .app-header {
     grid-template-columns: auto 1fr auto;
     gap: 12px;
     align-items: center;
     margin-bottom: 22px;
+  }
+
+  .header-controls {
+    gap: 8px;
   }
 
   .header-title {
@@ -849,7 +874,7 @@ button {
 
   .subscription-card {
     border-radius: 26px;
-    padding: 20px;
+    padding: 20px 20px 70px;
   }
 
   .app-logo {
@@ -867,15 +892,35 @@ button {
     margin: 18px 0 14px;
   }
 
-  .remaining-chip,
-  .card-actions {
+  .remaining-chip {
     display: none;
+  }
+
+  .card-actions {
+    position: absolute;
+    inset-inline-start: 16px;
+    bottom: 16px;
+    display: flex;
+    gap: 10px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .card-actions .mini-button {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 8px 20px rgba(42, 38, 55, 0.14);
+  }
+
+  .card-actions .mini-button:last-child {
+    color: #d23658;
   }
 
   .bottom-summary {
     right: 14px;
     left: 14px;
-    bottom: 26px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     grid-template-columns: auto 1fr auto;
     gap: 14px;
     min-height: 92px;

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "next:dev": "next dev",
-   "build": "node scripts/clean-static-output.mjs && next build && next export && node scripts/verify-static-export.mjs",
+    "build": "node scripts/clean-static-output.mjs && next build && node scripts/verify-static-export.mjs",
     "start": "next start",
     "lint": "next lint"
   },

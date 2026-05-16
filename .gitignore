@@ -10,3 +10,5 @@ dist/
 !.env.example
 public/sw.js
 public/workbox-*.js
+.claude/
+logo-source.png
