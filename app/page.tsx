@@ -239,14 +239,8 @@ export default function HomePage() {
     }
 
     const parsedSubscriptions = readStoredSubscriptions(storedSubscriptions);
-    const shouldRefreshDemo =
-      storedDemoVersion !== "arabic-pastel-v1" &&
-      (!parsedSubscriptions ||
-        parsedSubscriptions.length <= 4 ||
-        parsedSubscriptions.every((subscription) => subscription.id.startsWith("sample-")));
 
-    setSubscriptions(shouldRefreshDemo ? starterSubscriptions : parsedSubscriptions ?? starterSubscriptions);
-    localStorage.setItem("subflow.demoVersion", "arabic-pastel-v1");
+setSubscriptions(parsedSubscriptions ?? []);
     setHidePrices(storedPrivacy === "true");
     setReady(true);
 
