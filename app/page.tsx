@@ -232,8 +232,7 @@ export default function HomePage() {
     const storedCurrency = localStorage.getItem("subflow.currency") as Currency | null;
     const storedSubscriptions = localStorage.getItem("subflow.subscriptions");
     const storedPrivacy = localStorage.getItem("subflow.hidePrices");
-    const storedDemoVersion = localStorage.getItem("subflow.demoVersion");
-
+    localStorage.removeItem("subflow.subscriptions");
     if (storedCurrency && currencies.includes(storedCurrency)) {
       setPreferredCurrency(storedCurrency);
     }
