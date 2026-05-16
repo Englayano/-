@@ -1,0 +1,447 @@
+:root {
+  --ink: #244c74;
+  --ink-2: #315b82;
+  --mist: #eaf0f3;
+  --paper: #f8faf9;
+  --white: #ffffff;
+  --line: rgba(36, 76, 116, 0.16);
+  --muted: #5d7282;
+  --mint: #9ce9d2;
+  --shadow: 0 24px 70px rgba(24, 54, 82, 0.18);
+  --radius: 8px;
+  --arabic-font: "Thmanyah Sans", system-ui, sans-serif;
+  --latin-font: "Thmanyah Sans", system-ui, sans-serif;
+}
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("assets/fonts/thmanyah/thmanyahsans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("assets/fonts/thmanyah/thmanyahsans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("assets/fonts/thmanyah/thmanyahsans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("assets/identity/fonts/Montserrat-Regular_0.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("assets/identity/fonts/Montserrat-SemiBold_0.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("assets/identity/fonts/Montserrat-Bold_0.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    linear-gradient(rgba(248, 250, 249, 0.92), rgba(248, 250, 249, 0.96)),
+    url("assets/identity/pattern/pattern.png") center top / 720px auto;
+  color: var(--ink);
+  font-family: var(--arabic-font);
+  letter-spacing: 0;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.78), transparent 38%),
+    radial-gradient(circle at 18% 8%, rgba(156, 233, 210, 0.32), transparent 24rem);
+  pointer-events: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1rem, 5vw, 5rem);
+  border-bottom: 1px solid var(--line);
+  background: rgba(248, 250, 249, 0.86);
+  backdrop-filter: blur(18px);
+}
+
+.brand img {
+  width: clamp(8.5rem, 15vw, 12rem);
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 3vw, 2.2rem);
+  color: var(--muted);
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+
+.main-nav a:hover,
+.main-nav a:focus-visible {
+  color: var(--ink);
+}
+
+.header-action,
+.primary-action,
+.secondary-action {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.78rem 1.2rem;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  font-weight: 700;
+}
+
+.header-action,
+.secondary-action {
+  background: transparent;
+  color: var(--ink);
+}
+
+.primary-action {
+  background: var(--ink);
+  color: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(18rem, 1.14fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  min-height: calc(100vh - 5.25rem);
+  padding: clamp(3rem, 7vw, 6rem) clamp(1rem, 6vw, 6rem) 4rem;
+}
+
+.hero-copy {
+  max-width: 44rem;
+}
+
+.eyebrow,
+.project-type,
+.identity-strip span {
+  font-family: var(--latin-font);
+  letter-spacing: 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.8rem;
+  color: var(--ink-2);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 1rem;
+  color: var(--ink);
+  font-size: clamp(4rem, 11vw, 9.5rem);
+  font-weight: 700;
+  line-height: 0.9;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 5vw, 4.6rem);
+  font-weight: 700;
+  line-height: 1.04;
+}
+
+h3 {
+  margin-bottom: 0.55rem;
+  font-size: 1.25rem;
+}
+
+.lead {
+  max-width: 39rem;
+  margin-bottom: 2rem;
+  color: var(--muted);
+  font-size: clamp(1.04rem, 2vw, 1.28rem);
+  line-height: 1.9;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.hero-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.hero-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.hero-media img {
+  width: 100%;
+  height: clamp(22rem, 47vw, 43rem);
+  object-fit: cover;
+  object-position: 42% center;
+}
+
+.identity-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  padding: 0 clamp(1rem, 6vw, 6rem) 4rem;
+}
+
+.identity-strip span {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.62rem 0.9rem;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.section,
+.contact-section {
+  padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 6vw, 6rem);
+}
+
+.section-title {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.section-title.compact {
+  margin-bottom: 2rem;
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: clamp(2rem, 7vw, 6rem);
+  border-block: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.intro > p {
+  align-self: end;
+  max-width: 44rem;
+  color: var(--muted);
+  font-size: 1.16rem;
+  line-height: 1.95;
+}
+
+.work-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr;
+  gap: 1rem;
+}
+
+.project-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow);
+}
+
+.project-card img {
+  width: 100%;
+  height: 18rem;
+  object-fit: cover;
+}
+
+.project-card.featured img {
+  height: 24rem;
+}
+
+.brand-card {
+  background: var(--ink-2);
+  color: var(--white);
+}
+
+.brand-card img {
+  object-fit: contain;
+  padding: 2.5rem;
+  background: var(--ink-2);
+}
+
+.project-card div {
+  padding: 1.25rem;
+}
+
+.project-type {
+  margin-bottom: 0.45rem;
+  color: var(--ink-2);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.brand-card .project-type,
+.brand-card p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.project-card p {
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.skills {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+.skill-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.skill-list article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.45rem 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.skill-list span {
+  grid-row: span 2;
+  color: var(--ink-2);
+  font-family: var(--latin-font);
+  font-weight: 700;
+}
+
+.skill-list p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.contact-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: var(--ink);
+  color: var(--white);
+}
+
+.contact-section .eyebrow {
+  color: var(--mint);
+}
+
+.contact-section .primary-action {
+  border-color: var(--white);
+  background: var(--white);
+  color: var(--ink);
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .intro,
+  .skills,
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-header {
+    align-items: flex-start;
+  }
+
+  .main-nav,
+  .header-action {
+    display: none;
+  }
+
+  h1 {
+    font-size: clamp(3.2rem, 18vw, 5.4rem);
+  }
+
+  .hero-media img,
+  .project-card.featured img,
+  .project-card img {
+    height: 18rem;
+  }
+
+  .hero-actions a,
+  .contact-section a {
+    width: 100%;
+  }
+
+  .contact-section {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

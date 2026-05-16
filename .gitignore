@@ -1,0 +1,12 @@
+.next/
+node_modules/
+out/
+dist/
+*.log
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.env*
+!.env.example
+public/sw.js
+public/workbox-*.js
